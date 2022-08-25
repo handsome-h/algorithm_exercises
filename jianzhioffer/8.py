@@ -2,9 +2,43 @@
 把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。输入一个递增排序的数组的一个旋转，输出旋转数组的最小元素。例如数组{3,4,5,1,2}为{1,2,3,4,5}的一个旋转，该数组的最小值为1。
 """
 
+
 # 方法1，顺序遍历一遍，时间复杂度O(n)
-# 利用二分查找法，用两个指针分别指向数组的第一个元素和最后一个元素。找到数组中间元素。如果该中间元素位于前面的递增子数组，那么它应该大于或者等于第一个指针指向的元素，此时数组中最小的元素应该位于该中间元素的后面，把第一个指针指向该中间元素。同样，如果中间元素位于后面的递增子数组，那么它应该小于或者等于第二个指针指向的元素，此时该数组中最小的元素应该位于该中间元素的前面，把第二个指针指向该中间元素。两个情况下，查找范围都会缩小，重复做新一轮的查找。按上述思路的话，第一个指针总是指向前面递增数组的元素，而第二个指针总是指向后面递增数组的元素。最终第一个指针将指向前面子数组的最后一个元素，而第二个指针会指向后面子数组的第一个元素。也就是它们最终会指向两个相邻的元素，而第二个指针指向的刚好是最小的元素。这就是循环结束的条件。但当两个指针指向的数字及它们中间的数字三者相同的时候，是无法判断中间的数字是位于前面的子数组还是后面的子数组，也就无法移动两个指针来缩小查找范围，不得不采用顺序查找的方法。
 
 
-def min_in_order():
-    pass
+def min_in_order(array):
+    result = array[0]
+    for item in array:
+        if result > item:
+            result = item
+
+    return result
+
+
+def c_min(array):
+    if array is None or len(array) == 0:
+        return
+
+    index_pre = 0
+    index_post = len(array) - 1
+    index_mid = index_pre
+    while array[index_pre] >= array[index_post]:
+        if index_post - index_pre == 1:
+            index_mid = index_post
+            break
+
+        index_mid = (index_pre + index_post) // 2
+
+        if array[index_pre] == array[index_post] and array[index_mid] == array[index_pre]:
+            return min_in_order(array[index_pre: index_post])
+
+        if array[index_mid] >= array[index_pre]:
+            index_pre = index_mid
+        elif array[index_mid] <= array[index_post]:
+            index_post = index_mid
+
+    return array[index_mid]
+
+
+a = [3, 4, 5, 1, 2]
+print(c_min(a))
